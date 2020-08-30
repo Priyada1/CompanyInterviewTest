@@ -1,9 +1,11 @@
 import ApiResponseMethods.ApiResponses;
+import Utilities.Constants;
+import Utilities.utilities;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -28,9 +30,35 @@ public class CustomerSearchTest {
     public void CustomerSearchTest()
     {
         Response authenticateRespnose = apiResponses.postAuthToken(jsonObject.get("bodyParams"));
+        utilities.assertApiResponseEmpty(authenticateRespnose);
         String token = authenticateRespnose.jsonPath().get("token");
-        System.out.println(token);
+        Response userRespnose = apiResponses.getAllUsers(token);
+        Assert.assertEquals(userRespnose.statusCode(), 200, "Api response is sending Null");
+        Assert.assertNotNull(userRespnose.body().asString(), "Api response is sending Null");
+    }
 
+    @Test
+    public void CustomerSearchTestByUsingMobileNumber()
+    {
+        Response authenticateRespnose = apiResponses.postAuthToken(jsonObject.get("bodyParams"));
+        utilities.assertApiResponseEmpty(authenticateRespnose);
+        String token = authenticateRespnose.jsonPath().get("token");
+
+        Response userRespnoseByUsingMobilenumber = apiResponses.getUserbyUsingMobileNumber(Constants.MOBILE,token);
+        Assert.assertEquals(userRespnoseByUsingMobilenumber.statusCode(), 200, "Api response is sending Null");
+        Assert.assertNotNull(userRespnoseByUsingMobilenumber.body().asString(), "Api response is sending Null");
+    }
+
+    @Test
+    public void CustomerSearchTestByUsingInvalidMobileNumber()
+    {
+        Response authenticateRespnose = apiResponses.postAuthToken(jsonObject.get("bodyParams"));
+        utilities.assertApiResponseEmpty(authenticateRespnose);
+        String token = authenticateRespnose.jsonPath().get("token");
+
+        Response userRespnoseByUsingMobilenumber = apiResponses.getUserbyUsingMobileNumber(Constants.INVALIDMOBILE,token);
+        Assert.assertEquals(userRespnoseByUsingMobilenumber.statusCode(), 400, "Api Status code is not Matching");
+        Assert.assertNotNull(userRespnoseByUsingMobilenumber.body().asString(), "Api response is sending Null");
     }
 
 

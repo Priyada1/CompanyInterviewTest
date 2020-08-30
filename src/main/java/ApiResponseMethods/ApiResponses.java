@@ -18,10 +18,28 @@ public Response postAuthToken(Object bodyParams)
 
     Response response=(Response) given().contentType(ContentType.JSON).body(bodyParams).log()
             .all().when().post().then().extract();
-
     System.out.println(response.body().asString());
-
     return  response;
 }
+
+    public Response getAllUsers(String token)
+    {
+        RestAssured.baseURI= Constants.URI;
+        RestAssured.basePath=Constants.API_V1_USERS;
+        Response response = (Response) given().contentType(ContentType.JSON).header("Authorization", "Bearer " + token)
+                .log().all().when().get().then().extract();
+        System.out.println(response.body().asString());
+        return  response;
+    }
+
+    public Response getUserbyUsingMobileNumber(String mobile,String token)
+    {
+        RestAssured.baseURI= Constants.URI;
+        RestAssured.basePath=Constants.API_V1_USERS+mobile;
+        Response response = (Response) given().contentType(ContentType.JSON).header("Authorization", "Bearer " + token)
+                .log().all().when().get().then().extract();
+        System.out.println(response.body().asString());
+        return  response;
+    }
 
 }
